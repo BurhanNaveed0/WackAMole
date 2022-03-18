@@ -14,12 +14,11 @@ public class MainActivity extends AppCompatActivity {
     // CONSTANTS
     final int seconds = 60;
     final int timerInterval = 1;
-    final int width = 4;
-    final int height = 4;
+    final int width = 3;
+    final int height = 3;
 
     // STATE VARIABLES
     boolean gameOver;
-    boolean moleDrawn;
 
     boolean moleDrawn1;
     boolean moleDrawn2;
@@ -44,11 +43,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         gameOver = false;
-        moleDrawn = true;
 
-        moleDrawn1 = true;
-        moleDrawn2 = true;
-        moleDrawn3 = true;
+        moleDrawn1 = false;
+        moleDrawn2 = false;
+        moleDrawn3 = false;
 
         grid = new boolean[width][height];
         imageGrid = new ImageView[width][height];
@@ -69,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
                 int imageId = getBaseContext().getResources().getIdentifier(formattedId, "id", getPackageName());
 
                 imageGrid[i][j] = findViewById(imageId);
+                imageGrid[i][j].setAlpha(0f);
             }
         }
 
@@ -114,7 +113,6 @@ public class MainActivity extends AppCompatActivity {
                     moleDrawn3 = !moleDrawn3;
                     moleInterval3 = (int)(Math.random() * 6) + 3;
                 }
-
             }
 
             @Override
