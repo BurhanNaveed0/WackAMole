@@ -25,13 +25,22 @@ public class MainActivity extends AppCompatActivity {
     boolean moleDrawn3;
 
     int secondsLeft;
+
     int moleInterval1;
     int moleInterval2;
     int moleInterval3;
 
+    int moleTimer1;
+    int moleTimer2;
+    int moleTimer3;
+
+    int moleCount1;
+    int moleCount2;
+    int moleCount3;
+
     // GRID
-    boolean[][] grid;
     ImageView[][] imageGrid;
+    int[][] molePosList;
 
     // UI ELEMENTS
     TextView timerText;
@@ -48,18 +57,20 @@ public class MainActivity extends AppCompatActivity {
         moleDrawn2 = false;
         moleDrawn3 = false;
 
-        grid = new boolean[width][height];
         imageGrid = new ImageView[width][height];
+        molePosList = new int[3][2];
 
         moleInterval1 = (int)(Math.random() * 6) + 3;
         moleInterval2 = (int)(Math.random() * 6) + 3;
         moleInterval3 = (int)(Math.random() * 6) + 3;
 
-        for(int i = 0; i < grid.length; i++) {
-            for(int j = 0; j < grid[i].length; j++) {
-                grid[i][j] = false;
-            }
-        }
+        moleTimer1 = moleInterval1;
+        moleTimer2 = moleInterval2;
+        moleTimer2 = moleInterval2;
+
+        moleCount1 = 0;
+        moleCount2 = 0;
+        moleCount3 = 0;
 
         for(int i = 0; i < imageGrid.length; i++) {
             for(int j = 0; j < imageGrid[i].length; j++) {
@@ -71,48 +82,75 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        molePosList = generatePosArr(width, height);
+
         timerText = (TextView) findViewById(R.id.id_text_timer);
         mole = (ImageView) findViewById(R.id.id_image_mole_0_0);
 
         new CountDownTimer(seconds * 1000, timerInterval * 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
+                int mole1x = molePosList[0][0];
+                int mole1y = molePosList[0][1];
+
+                int mole2x = molePosList[1][0];
+                int mole2y = molePosList[1][1];
+
+                int mole3x = molePosList[2][0];
+                int mole3y = molePosList[2][1];
+
                 secondsLeft = (int) (millisUntilFinished / 1000);
                 updateTimerText(secondsLeft);
 
-                moleInterval1--;
-                moleInterval2--;
-                moleInterval3--;
+                moleTimer1--;
+                moleTimer2--;
+                moleTimer3--;
 
-                if(moleInterval1 == 0) {
+                if(moleTimer1 == 0) {
                     if(moleDrawn1)
-                        imageGrid[1][0].animate().alpha(0).setDuration(500);
+                        imageGrid[mole1x][mole1y].animate().alpha(0).setDuration(500);
                     else
-                        imageGrid[1][0].animate().alpha(1).setDuration(500);
+                        imageGrid[mole1x][mole1y].animate().alpha(1).setDuration(500);
 
                     moleDrawn1 = !moleDrawn1;
-                    moleInterval1 = (int)(Math.random() * 6) + 3;
+                    moleTimer1 = moleInterval1;
+                    moleCount1++;
                 }
 
-                if(moleInterval2 == 0) {
+                if(moleTimer2 == 0) {
                     if(moleDrawn2)
-                        imageGrid[1][1].animate().alpha(0).setDuration(500);
+                        imageGrid[mole2x][mole2y].animate().alpha(0).setDuration(500);
                     else
-                        imageGrid[1][1].animate().alpha(1).setDuration(500);
+                        imageGrid[mole2x][mole2y].animate().alpha(1).setDuration(500);
 
                     moleDrawn2 = !moleDrawn2;
-                    moleInterval2 = (int)(Math.random() * 6) + 3;
+                    moleTimer2 = moleInterval2;
+                    moleCount2++;
                 }
 
-                if(moleInterval3 == 0) {
+                if(moleTimer3 == 0) {
                     if(moleDrawn3)
-                        imageGrid[1][2].animate().alpha(0).setDuration(500);
+                        imageGrid[mole3x][mole3y].animate().alpha(0).setDuration(500);
                     else
-                        imageGrid[1][2].animate().alpha(1).setDuration(500);
+                        imageGrid[mole3x][mole3y].animate().alpha(1).setDuration(500);
 
                     moleDrawn3 = !moleDrawn3;
-                    moleInterval3 = (int)(Math.random() * 6) + 3;
+                    moleTimer3 = moleInterval3;
+                    moleCount3++;
                 }
+
+                if(moleTimer1 == 0 && moleTimer2 == 0 && moleTimer3 == 0 && !moleDrawn1 && !moleDrawn2 && !moleDrawn3 && moleCount1 >= 2 && moleCount2 >= 2 && moleCount3 >= 2) {
+                    molePosList = generatePosArr(width, height);
+
+                    moleInterval1 = (int)(Math.random() * 6) + 3;
+                    moleInterval2 = (int)(Math.random() * 6) + 3;
+                    moleInterval3 = (int)(Math.random() * 6) + 3;
+
+                    moleTimer1 = moleInterval1;
+                    moleTimer2 = moleInterval2;
+                    moleTimer2 = moleInterval2;
+                }
+
             }
 
             @Override
@@ -132,5 +170,25 @@ public class MainActivity extends AppCompatActivity {
                 timerText.setText(String.valueOf(time));
             }
         });
+    }
+
+    private int[][] generatePosArr(int width, int height) {
+        int[][] molePosList = new int[width][height];
+
+        for(int i = 0; i < molePosList.length; i++) {
+            for(int j = 0; j < molePosList[i].length; j++) {
+                molePosList[i][j] = (int)(Math.random() * width);
+            }
+        }
+
+        for(int i = 1; i < molePosList.length; i++) {
+            if(molePosList[i-1][0] == molePosList[i][0] && molePosList[i-1][1] == molePosList[i][1]) {
+                while (molePosList[i-1][1] == molePosList[i][1]) {
+                    molePosList[i][1] = (int)(Math.random() * width);
+                }
+            }
+        }
+
+        return molePosList;
     }
 }
