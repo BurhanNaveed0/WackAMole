@@ -138,7 +138,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         moleInterval2 = (int)(Math.random() * 3) + 2;
                         molePosList[1] = generatePlayerPos(molePosList, 1);
                     }
-
                 }
 
                 if(moleTimer3 == 0) {
@@ -222,6 +221,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
-        view.animate().alpha(0).setDuration(500);
+        String name = getBaseContext().getResources().getResourceName(view.getId());
+
+        if(view.getAlpha() == 1f) {
+            view.animate().alpha(0).setDuration(500);
+        }
+
     }
 }
